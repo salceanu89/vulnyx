@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vulnyx Web Scanner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --bg: #ffffff;
+            --text: #333333;
+        }
+
+        .dark {
+            --bg: #1e1e1e;
+            --text: #f4f4f4;
+        }
+
+        body {
+            font-family: Arial;
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            margin: 0;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .results {
+            background: var(--text);
+            color: var(--bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        h1 { color: #444; }
+        h2 { color: #e74c3c; }
+        h3 { color: #f39c12; }
+
+        .toggle-btn {
+            float: right;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            input[type="text"] {
+                width: 100%;
+            }
+            .toggle-btn {
+                float: none;
+                display: block;
+                margin: 10px 0;
+            }
+        }
+    </style>
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            if (body.classList.contains("dark")) {
+                body.classList.remove("dark");
+                localStorage.setItem("theme", "light");
+            } else {
+                body.classList.add("dark");
+                localStorage.setItem("theme", "dark");
+            }
+        }
+
+        window.onload = () => {
+            const savedTheme = localStorage.getItem("theme") || "dark";
+            document.body.classList.add(savedTheme);
+        };
+    </script>
+</head>
+<body>
+
+<p style="text-align: right;">
+    <a href="{{ url_for('index') }}">🏠 Home</a> |
+    <a href="{{ url_for('dashboard') }}">📊 Dashboard</a> |
+    <a href="{{ url_for('logout') }}">Logout</a> |
+    <button class="toggle-btn" onclick="toggleTheme()">🌙 Toggle Theme</button>
+</p>
+
+<h1>🐍 Vulnyx Web Vulnerability Scanner</h1>
+
+<form method="POST" action="{{ url_for('index') }}">
+    <label for="target_url">Enter URL:</label><br>
+    <input type="text" id="target_url" name="target_url" size="50" required>
+    <button type="submit">Scan</button>
+</form>
+
+{% if url %}
+    <div class="results">
+        <h2>Scanned URL: {{ url }}</h2>
+        <p><strong>Scan completed in:</strong> {{ scan_duration }} seconds</p>
+
+        <h3>XSS Vulnerabilities ({{ xss_results|length }}):</h3>
+        <ul>
+            {% for xss in xss_results %}
+                <li>{{ xss }}</li>
+            {% endfor %}
+        </ul>
+
+        <h3>SQL Injection Vulnerabilities ({{ sqli_results|length }}):</h3>
+        <ul>
+            {% for sqli in sqli_results %}
+                <li>{{ sqli }}</li>
+            {% endfor %}
+        </ul>
+
+        <h2>Download Reports:</h2>
+        {% if latest_txt %}
+        <a href="{{ url_for('static', filename='reports/' + latest_txt) }}" download>📄 Download TXT Report</a><br>
+        {% else %}
+        <p>TXT report not available yet.</p>
+        {% endif %}
+
+        {% if latest_html %}
+        <a href="{{ url_for('static', filename='reports/' + latest_html) }}" download>🌐 Download HTML Report</a>
+        {% else %}
+        <p>HTML report not available yet.</p>
+        {% endif %}
+    </div>
+{% endif %}
+
+</body>
+</html>

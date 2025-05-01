@@ -1,0 +1,6 @@
+=== Vulnyx Scan Report ===
+Timestamp: 20250501_180458
+
+>>> XSS Vulnerabilities:
+
+>>> SQL Injection Vulnerabilities:

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>📊 Vulnyx Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            color: #70cfff;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #444;
+            text-align: left;
+        }
+        th {
+            background-color: #333;
+        }
+        tr:hover {
+            background-color: #2a2a2a;
+        }
+        a {
+            color: #87e0ff;
+        }
+        .nav {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        .toggle-btn {
+            margin-left: 10px;
+        }
+    </style>
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            if (body.classList.contains("dark")) {
+                body.classList.remove("dark");
+                localStorage.setItem("theme", "light");
+            } else {
+                body.classList.add("dark");
+                localStorage.setItem("theme", "dark");
+            }
+        }
+
+        window.onload = () => {
+            const savedTheme = localStorage.getItem("theme") || "dark";
+            document.body.classList.add(savedTheme);
+        };
+    </script>
+</head>
+<body>
+
+<p class="nav">
+    <a href="{{ url_for('index') }}">🏠 Home</a> |
+    <a href="{{ url_for('dashboard') }}">📊 Dashboard</a> |
+    <a href="{{ url_for('logout') }}">Logout</a>
+    <button class="toggle-btn" onclick="toggleTheme()">🌙 Toggle Theme</button>
+</p>
+
+<h1>📊 Vulnyx Scan Dashboard</h1>
+
+<table>
+    <tr>
+        <th>Timestamp</th>
+        <th>XSS</th>
+        <th>SQLi</th>
+        <th>Download</th>
+    </tr>
+    {% for report in reports %}
+    <tr>
+        <td>{{ report.timestamp }}</td>
+        <td>{{ report.xss_count }}</td>
+        <td>{{ report.sqli_count }}</td>
+        <td>
+            <a href="{{ url_for('static', filename='reports/' + report.file) }}" download>📥 JSON</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>
