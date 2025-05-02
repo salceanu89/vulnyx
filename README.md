@@ -57,7 +57,7 @@ Run the scanner (CLI mode):
 
 bash
 
-python vulnyx.py --url http://example.com --txt --json
+python vulnyx.py --url http://testphp.vulnweb.com --txt --json
 
 
 **roject Structure**
